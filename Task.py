@@ -1,6 +1,7 @@
 class Task():
-    def __init__(self,title,done,time,deadline):
+    def __init__(self,title,loai,done,time,deadline):
         self.title= title
+        self.loai= loai
         self.done = done
         self.time= time
         self.deadline= deadline
@@ -16,6 +17,7 @@ class Task():
     def from_dict(diction):
         return Task(
             diction["title"],
+            diction["loai"],
             diction["done"],
             diction["time"],
             diction["deadline"]

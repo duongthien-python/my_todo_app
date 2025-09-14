@@ -13,14 +13,20 @@ class Manager:
             with open(self.path, "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
+                    phan_loai=[]
                     for item in data:
                         task = Task(
                             title=item["title"],
+                            loai = item["loai"],
                             done=item.get("done", False),
                             time=datetime.fromisoformat(item["time"]),
                             deadline=datetime.fromisoformat(item["deadline"])
                         )
-                        self.tasks.append(task)
+                        if task.loai == "daily task":
+                            phan_loai.append(task)
+                        else:
+                            self.tasks.append(task)
+                    self.tasks+= phan_loai    
                 except json.JSONDecodeError:
                     print("⚠️ File rỗng hoặc sai định dạng, bắt đầu mới.")
 
@@ -30,6 +36,7 @@ class Manager:
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump([{
                 "title": t.title,
+                "loai": t.loai,
                 "done": t.done,
                 "time": t.time.isoformat(),
                 "deadline": t.deadline.isoformat()
