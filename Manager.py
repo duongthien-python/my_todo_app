@@ -41,6 +41,7 @@ class Manager:
                 "time": t.time.isoformat(),
                 "deadline": t.deadline.isoformat()
             } for t in tasks], f, indent=2, ensure_ascii=False)
+        self.sorting()
 
     def add(self, task):
         task=Task.from_dict(task)
@@ -48,11 +49,16 @@ class Manager:
         self.save()
 
     def delete(self):
-        self.tasks = [task for task in self.tasks if not task.done]
+        self.tasks = [task for task in self.tasks if not task.done or task.loai =="daily task"]
         self.save()
 
+    def sorting(self):
+        daily=[]
+        day=[]
+        for task in self.tasks:
+            if task.loai== "daily_task":
+                daily.append(task)
+            else:
+                day.append(task)
+        self.tasks= day + daily
     
-    
-
-
-

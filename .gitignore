@@ -1,0 +1,9 @@
+﻿.gitignore
+dist/
+build/
+__pycache__/
+todo.json
+static.json
+module.py
+bug.txt
+practice_static.json

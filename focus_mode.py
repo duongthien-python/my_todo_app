@@ -1,40 +1,22 @@
 import os
 import json
 from datetime import datetime
-import sys
-
-def get_path(filename):
-    if getattr(sys, 'frozen', False):
-        base_path = os.path.dirname(sys.executable)
-    else:
-        base_path = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(base_path, filename)
-
-json_path = get_path("static.json")
 
 class Focus:
-    def __init__(self, duration_minutes=25):
-        # duration_minutes: số phút mỗi phiên tập trung
-        self.seconds_focus = int(duration_minutes) * 60
-        self.seconds_rest = 5 * 60  # bạn có thể thay đổi (mặc định 5 phút)
+    def __init__(self, path, duration_minutes: int = 25):
+        self.seconds_focus = duration_minutes * 60
+        self.seconds_rest = 5 * 60 
         self.seconds_left = self.seconds_focus
         self.is_resting = False
-        self.current_period = 0      # số phiên đã hoàn tất
-        self.periods_total = 0      # tổng số phiên cần làm (set khi bắt đầu Pomodoro)
-        self.path = json_path
-
-    def nomarl_timer(self):
-        if self.seconds_left>0:
-            self.seconds_left -= 1
-            return True
-        else:
-            return False
+        self.current_period = 0      
+        self.periods_total = 0     
+        self.path = path
 
 
 
     def start_pomodoro(self, periods_total=4, rest_minutes=5):
         self.periods_total = int(periods_total)
-        self.seconds_focus = int(self.seconds_focus)  # đảm bảo int
+        self.seconds_focus = int(self.seconds_focus)  
         self.seconds_rest = int(rest_minutes) * 60
         self.is_resting = False
         self.seconds_left = self.seconds_focus
@@ -49,20 +31,15 @@ class Focus:
             self.seconds_left -= 1
             return True
         else:
-            # Nếu đang nghỉ, kết thúc một chu kỳ nghỉ -> bắt đầu focus mới (nếu còn)
             if self.is_resting:
                 self.is_resting = False
                 self.seconds_left = self.seconds_focus
-                # tiếp tục chạy nếu chưa hoàn tất all periods
                 return self.current_period < self.periods_total
             else:
-                # vừa kết thúc 1 phiên focus
                 self.current_period += 1
                 if self.current_period >= self.periods_total:
-                    # hoàn tất toàn bộ chu kỳ
                     return False
                 else:
-                    # bắt đầu thời gian nghỉ
                     self.is_resting = True
                     self.seconds_left = self.seconds_rest
                     return True
@@ -78,11 +55,9 @@ class Focus:
         if self.is_resting:
             return "Nghỉ ngơi"
         else:
-            # hiện tại đang trong phiên tập trung, current_period là số hoàn tất
             return f"Đang học (#{self.current_period }/{self.periods_total})"
 
     def save_time_done(self,time: None):
-        # Lưu lại số phiên đã hoàn tất
         if not os.path.exists(self.path):
             with open(self.path, "w", encoding="utf-8") as f:
                 json.dump([], f)
@@ -99,9 +74,18 @@ class Focus:
             })
         else:
             time_done.append({
-                "time have done" : f"{time} minutes",
-                "finished at" : datetime.now().isoformat()
+                "time have done" : time,
+                "finished_at" : datetime.now().isoformat()
             })
 
         with open(self.path, "w", encoding="utf-8") as f:
             json.dump(time_done, f, indent=2, ensure_ascii=False)
+
+
+class focus_manager:
+    def __init__ (self,path):
+        self.path= path
+    def delete():
+        pass
+    def save():
+        pass
